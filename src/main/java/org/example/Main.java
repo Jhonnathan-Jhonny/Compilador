@@ -5,10 +5,7 @@ import org.example.lexer.RegexLexer;
 import org.example.lexer.Token;
 import org.example.lexer.TokenType;
 import org.example.parser.Parser;
-import org.example.parser.SyntaxError;
 import org.example.parser.TokenBuffer;
-
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 public class Main {
@@ -35,7 +32,7 @@ public class Main {
                  System.out.println("\n=== ANALISE SINTATICA ===");
                  Parser parser = new Parser(buffer);
                  parser.parse();
-                 System.out.println("Expressão válida!");
+                 System.out.println("Expressao valida!");
              }
          } catch (Exception e) {
              System.err.println("Erro: " + e.getMessage());

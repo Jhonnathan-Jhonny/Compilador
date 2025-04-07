@@ -12,7 +12,6 @@ public class RegexLexer implements Lexer{
     }
 
     public Token readNextToken() throws IOException{
-
         while(buffer.getReadedLine() != null){
             if(buffer.isEndOfLine()){
                 buffer.readNextLine();

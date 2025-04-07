@@ -27,5 +27,4 @@ public class CharBuffer implements Closeable{
     public void close() throws IOException{
         reader.close();
     }
-
 }

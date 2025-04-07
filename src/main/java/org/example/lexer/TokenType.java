@@ -12,5 +12,6 @@ public enum TokenType {
     FECHA_PAR,
     ABRE_PAR,
     BREAK_LINE,
-    OP_PLUS;
+    OP_PLUS,
+    OP_POW;
 }
