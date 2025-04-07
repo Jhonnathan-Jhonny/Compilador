@@ -11,8 +11,9 @@ import java.io.IOException;
  Expr'      → ("+" | "-") Term Expr' | ε
  Term       → Factor Term'
  Term'      → ("*" | "/") Factor Term' | ε
- Factor     → "(" Expr ")" | "+" Factor | "-" Factor | INT | FLOAT
-
+ Factor     → Power Factor'
+ Factor'    → "^" Power Factor' | ε
+ Power      → "(" Expr ")" | "+" Power | "-" Power | INT | FLOAT
 
  Ordem de precedência:
   1. Parênteses ()
@@ -38,10 +39,10 @@ public class Parser {
 
     // Regra Expr → Term ( ("+" | "-") Term )*
     private void expr() throws IOException {
-        if (isPrefixExpression()) {
-            parsePrefix();
-        } else {
-            parseInfix();
+        term();
+        while (lookAhead(TokenType.OP_SUM, TokenType.OP_MINUS)) {
+            buffer.match(buffer.lookAhead(1).type());
+            term();
         }
     }
 
@@ -52,7 +53,7 @@ public class Parser {
         // É prefixo se:
         // 1. É um operador e o próximo token não é um operador
         // 2. Ou está no início de uma expressão entre parênteses
-        return (isUnaryOperator(la.type()) && !isBinaryOperator(next.type())) ||
+        return (isUnaryOperator(la.type()) && isBinaryOperator(next.type())) ||
                 (la.type() == TokenType.ABRE_PAR && isUnaryOperator(next.type()));
     }
 
@@ -61,8 +62,9 @@ public class Parser {
     }
 
     private boolean isBinaryOperator(TokenType type) {
-        return type == TokenType.OP_SUM || type == TokenType.OP_MINUS ||
-                type == TokenType.OP_MUL || type == TokenType.OP_DIV;
+        return type != TokenType.OP_SUM && type != TokenType.OP_MINUS &&
+                type != TokenType.OP_MUL && type != TokenType.OP_DIV &&
+                type != TokenType.OP_POW;
     }
 
     private void parsePrefix() throws IOException {
@@ -81,7 +83,7 @@ public class Parser {
         term();
         while (true) {
             Token la = buffer.lookAhead(1);
-            if (!isBinaryOperator(la.type())) break;
+            if (isBinaryOperator(la.type())) break;
 
             buffer.match(la.type());
             term();
@@ -97,13 +99,21 @@ public class Parser {
         }
     }
 
-    // Regra Factor → INT | FLOAT | "(" Expr ")"
     private void factor() throws IOException {
+        power();
+        if (lookAhead(TokenType.OP_POW)) {
+            buffer.match(TokenType.OP_POW);
+            factor();  // Recursão para associatividade à direita
+        }
+    }
+
+    //Antigo factor
+    private void power() throws IOException {
         Token la = buffer.lookAhead(1);
         // Operador unário
         if (isUnaryOperator(la.type())) {
             buffer.match(la.type());
-            factor(); // Recursão para lidar com o operando
+            power();
         }
         // Números
         else if (la.type() == TokenType.INT || la.type() == TokenType.FLOAT) {
