@@ -7,6 +7,7 @@ public class RegexLexer implements Lexer{
     
     private final LineBuffer buffer;
 
+    //Constructor
     public RegexLexer(String filePath) throws IOException{
         buffer = new LineBuffer(filePath);
     }
