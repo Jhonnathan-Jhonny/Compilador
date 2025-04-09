@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 
 public enum TokenPattern {
     WHITESPACE_PATTERN(Pattern.compile("\\s+"), null),
-    INT_PATTERN(Pattern.compile("\\d+"), TokenType.INT),
     FLOAT_PATTERN(Pattern.compile("\\d+\\.\\d+"), TokenType.FLOAT),
+    INT_PATTERN(Pattern.compile("\\d+"), TokenType.INT),
     OP_SUM_PATTERN(Pattern.compile("\\+"), TokenType.OP_SUM),
     OP_MINUS_PATTERN(Pattern.compile("-"), TokenType.OP_MINUS),
     OP_MUL_PATTERN(Pattern.compile("\\*"), TokenType.OP_MUL),
