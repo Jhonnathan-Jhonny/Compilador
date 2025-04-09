@@ -5,22 +5,30 @@ import org.example.lexer.TokenType;
 import java.io.IOException;
 
 /**
- Gramática utilizada para analisar expressões matemáticas:
+ Gramática e lexema
 
- Expr       → Term Expr'
- Expr'      → ("+" | "-") Term Expr' | ε
- Term       → Factor Term'
- Term'      → ("*" | "/") Factor Term' | ε
- Factor     → Power Factor'
- Factor'    → "^" Power Factor' | ε
- Power      → "(" Expr ")" | "+" Power | "-" Power | INT | FLOAT
+ grammar MathExpr;
 
- Ordem de precedência:
-  1. Parênteses ()
-  2. Multiplicação e divisão (*, /)
-  3. Soma e subtração (+, -)
+ // Regras de parser
+ expr: term expr_prime;
+ expr_prime: (PLUS | MINUS) term expr_prime | ;
+ term: factor term_prime;
+ term_prime: (MULT | DIV) factor term_prime | ;
+ factor: power factor_prime;
+ factor_prime: POW power factor_prime | ;
+ power: LPAREN expr RPAREN | PLUS power | MINUS power | INT | FLOAT;
 
- Implementação baseada na técnica de descida recursiva.
+ // Regras de lexer
+ PLUS: '+';
+ MINUS: '-';
+ MULT: '*';
+ DIV: '/';
+ POW: '^';
+ LPAREN: '(';
+ RPAREN: ')';
+ INT: [0-9]+;
+ FLOAT: [0-9]+ '.' [0-9]+;
+ WS: [ \t\r\n]+ -> skip;
 
 **/
 
@@ -33,11 +41,42 @@ public class Parser {
     }
 
     public void parse() throws IOException {
-        expr();
-        buffer.match(TokenType.EOF); // Garante que todos os tokens foram consumidos
+        Token la = buffer.lookAhead(1);
+
+        if (isUnaryOperator(la.type())) {
+            parsePrefix();
+        } else {
+            expr(); // infixa normal
+        }
+
+        buffer.match(TokenType.EOF); // garante que tudo foi consumido
     }
 
-    // Regra Expr → Term ( ("+" | "-") Term )*
+    private void parsePrefix() throws IOException {
+        Token op = buffer.match(buffer.lookAhead(1).type());
+        // Prefixo é sempre operador seguido de duas expressões
+        // E cada "expr" aqui pode ser outra prefixa ou valor terminal
+        parsePrefixOperand(); // primeiro operando
+        parsePrefixOperand(); // segundo operando
+    }
+
+    private void parsePrefixOperand() throws IOException {
+        Token la = buffer.lookAhead(1);
+
+        if (isUnaryOperator(la.type())) {
+            parsePrefix(); // outra operação prefixa
+        } else if (la.type() == TokenType.INT || la.type() == TokenType.FLOAT) {
+            buffer.match(la.type()); // valor terminal
+        } else if (la.type() == TokenType.ABRE_PAR) {
+            buffer.match(TokenType.ABRE_PAR);
+            expr(); // expressão infixa dentro de parênteses
+            buffer.match(TokenType.FECHA_PAR);
+        } else {
+            throw new SyntaxError(la, TokenType.INT, TokenType.FLOAT, TokenType.ABRE_PAR);
+        }
+    }
+
+
     private void expr() throws IOException {
         term();
         while (lookAhead(TokenType.OP_SUM, TokenType.OP_MINUS)) {
@@ -46,51 +85,14 @@ public class Parser {
         }
     }
 
-    private boolean isPrefixExpression() {
-        Token la = buffer.lookAhead(1);
-        Token next = buffer.lookAhead(2);
-
-        // É prefixo se:
-        // 1. É um operador e o próximo token não é um operador
-        // 2. Ou está no início de uma expressão entre parênteses
-        return (isUnaryOperator(la.type()) && isBinaryOperator(next.type())) ||
-                (la.type() == TokenType.ABRE_PAR && isUnaryOperator(next.type()));
-    }
-
     private boolean isUnaryOperator(TokenType type) {
-        return type == TokenType.OP_SUM || type == TokenType.OP_MINUS;
+        return switch (type) {
+            case OP_SUM, OP_MINUS, OP_MUL, OP_DIV, OP_POW -> true;
+            default -> false;
+        };
     }
 
-    private boolean isBinaryOperator(TokenType type) {
-        return type != TokenType.OP_SUM && type != TokenType.OP_MINUS &&
-                type != TokenType.OP_MUL && type != TokenType.OP_DIV &&
-                type != TokenType.OP_POW;
-    }
 
-    private void parsePrefix() throws IOException {
-        // Consome o operador (+, -, *, /)
-        Token op = buffer.lookAhead(1);
-        buffer.match(op.type());
-
-        // Primeiro operando (pode ser outra expressão prefixa ou um termo simples)
-        expr();
-
-        // Segundo operando
-        expr();
-    }
-
-    private void parseInfix() throws IOException {
-        term();
-        while (true) {
-            Token la = buffer.lookAhead(1);
-            if (isBinaryOperator(la.type())) break;
-
-            buffer.match(la.type());
-            term();
-        }
-    }
-
-    // Regra Term → Factor ( ("*" | "/") Factor )*
     private void term() throws IOException {
         factor();
         while (lookAhead(TokenType.OP_MUL, TokenType.OP_DIV)) {
@@ -110,16 +112,13 @@ public class Parser {
     //Antigo factor
     private void power() throws IOException {
         Token la = buffer.lookAhead(1);
-        // Operador unário
         if (isUnaryOperator(la.type())) {
             buffer.match(la.type());
             power();
         }
-        // Números
         else if (la.type() == TokenType.INT || la.type() == TokenType.FLOAT) {
             buffer.match(la.type());
         }
-        // Expressão entre parênteses
         else if (la.type() == TokenType.ABRE_PAR) {
             buffer.match(TokenType.ABRE_PAR);
             expr();

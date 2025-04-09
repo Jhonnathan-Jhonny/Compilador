@@ -43,12 +43,12 @@ public class TokenBuffer implements Closeable {
         return k >= buffer.size() ? buffer.getLast() : buffer.get(k);
     }
 
-    public void match(TokenType type) throws IOException {
+    public Token match(TokenType type) throws IOException {
         var la = lookAhead(1);
 
         if (la.type() == type) {
             confirmToken();
-            return;
+            return la;
         }
 
         throw new SyntaxError(la, type);
