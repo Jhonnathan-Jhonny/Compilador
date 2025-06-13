@@ -4,11 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7ff5c2e-a2c6-4936-965f-f852c998aba1" name="Changes" comment="" />
+    <list default="true" id="b7ff5c2e-a2c6-4936-965f-f852c998aba1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/org/example/parser/Parser$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../out/org/example/parser/Parser$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/org/example/parser/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/../out/org/example/parser/Parser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/java/org/example/entrada.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/org/example/entrada.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/java/org/example/parser/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/org/example/parser/Parser.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
@@ -21,7 +30,10 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jjrrj/OneDrive/Documents/estudos/Compilador-unidade2&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -44,6 +56,9 @@
       <updated>1743526348592</updated>
       <workItem from="1743526349827" duration="46000" />
       <workItem from="1743526407554" duration="59000" />
+      <workItem from="1747730596057" duration="31000" />
+      <workItem from="1747730637221" duration="74000" />
+      <workItem from="1747735978714" duration="7000" />
     </task>
     <servers />
   </component>

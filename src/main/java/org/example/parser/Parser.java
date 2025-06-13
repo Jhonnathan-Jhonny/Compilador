@@ -9,28 +9,50 @@ import java.io.IOException;
 
  grammar MathExpr;
 
- // Regras de parser
- expr: term expr_prime;
- expr_prime: (PLUS | MINUS) term expr_prime | ;
- term: factor term_prime;
- term_prime: (MULT | DIV) factor term_prime | ;
- factor: power factor_prime;
- factor_prime: POW power factor_prime | ;
- power: LPAREN expr RPAREN | PLUS power | MINUS power | INT | FLOAT;
+ grammar MathExpr;
 
- // Regras de lexer
+ // --- Regra inicial ---
+ expr: prefixExpr| infixExpr;
+
+ // --- EXPRESSÕES PREFIXAS ---
+ prefixExpr: operator prefixOperand prefixOperand;
+
+ prefixOperand: prefixExpr| LPAREN infixExpr RPAREN| INT| FLOAT;
+
+ // --- EXPRESSÕES INFIXAS ---
+ infixExpr: infixTerm ( (PLUS | MINUS) infixTerm )*;
+
+ infixTerm: infixFactor ( (MULT | DIV) infixFactor )*;
+
+ infixFactor: infixPower (POW infixFactor)?;
+
+ infixPower
+ : LPAREN infixExpr RPAREN
+ | PLUS infixPower
+ | MINUS infixPower
+ | INT
+ | FLOAT
+ ;
+
+ // --- TOKENS ---
  PLUS: '+';
  MINUS: '-';
  MULT: '*';
  DIV: '/';
  POW: '^';
+
  LPAREN: '(';
  RPAREN: ')';
+
  INT: [0-9]+;
  FLOAT: [0-9]+ '.' [0-9]+;
+
  WS: [ \t\r\n]+ -> skip;
 
-**/
+ // --- OPERADOR GENÉRICO (para prefixa) ---
+ operator: PLUS | MINUS | MULT | DIV | POW;
+
+ **/
 
 public class Parser {
 
